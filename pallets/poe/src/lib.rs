@@ -5,6 +5,12 @@
 /// <https://docs.substrate.io/reference/frame-pallets/>
 pub use pallet::*;
 
+#[cfg(test)]
+mod mock;		// when running in test env, use mock.rs module
+
+#[cfg(test)]
+mod tests;	// when running in test env, use test.rs module
+
 #[frame_support::pallet]
 pub mod pallet {
 	use frame_support::pallet_prelude::*;
