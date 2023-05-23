@@ -38,9 +38,9 @@ pub mod pallet {
 	#[pallet::event]
 	#[pallet::generate_deposit(pub(super) fn deposit_event)]
 	pub enum Event<T: Config> {
-		ClaimCreated(T::AccountId, Vec<u8>),
-		ClaimRevoked(T::AccountId, Vec<u8>),
-		ClaimTransferred(T::AccountId, T::AccountId, Vec<u8>),
+		ClaimCreated(T::AccountId, BoundedVec<u8, T::MaxClaimLength>),
+		ClaimRevoked(T::AccountId, BoundedVec<u8, T::MaxClaimLength>),
+		ClaimTransferred(T::AccountId, T::AccountId, BoundedVec<u8, T::MaxClaimLength>),
 	}
 
 	// Errors inform users that something went wrong.
@@ -59,7 +59,10 @@ pub mod pallet {
 	impl<T: Config> Pallet<T> {
 		/// create a claim
 		#[pallet::weight(0)]
-		pub fn create_claim(origin: OriginFor<T>, claim: Vec<u8>) -> DispatchResultWithPostInfo {
+		pub fn create_claim(
+			origin: OriginFor<T>,
+			claim: BoundedVec<u8, T::MaxClaimLength>
+		) -> DispatchResultWithPostInfo {
 			// Check that the extrinsic was signed and get the signer.
 			// This function will return an error if the extrinsic is not signed.
 			// https://docs.substrate.io/main-docs/build/origins/
@@ -83,7 +86,10 @@ pub mod pallet {
 
 		/// revoke a claim
 		#[pallet::weight(0)]
-		pub fn revoke_claim(origin: OriginFor<T>, claim: Vec<u8>) -> DispatchResultWithPostInfo {
+		pub fn revoke_claim(
+			origin: OriginFor<T>,
+			claim: BoundedVec<u8, T::MaxClaimLength>
+		) -> DispatchResultWithPostInfo {
 			let sender = ensure_signed(origin)?;
 
 			// Update storage.
@@ -102,7 +108,11 @@ pub mod pallet {
 
 		/// transfer a claim
 		#[pallet::weight(0)]
-		pub fn transfer_claim(origin: OriginFor<T>, to: T::AccountId, claim: Vec<u8>) -> DispatchResultWithPostInfo {
+		pub fn transfer_claim(
+			origin: OriginFor<T>,
+			to: T::AccountId,
+			claim: BoundedVec<u8, T::MaxClaimLength>
+		) -> DispatchResultWithPostInfo {
 			let sender = ensure_signed(origin)?;
 
 			// Update storage.
